@@ -51,10 +51,10 @@ namespace ImageDescriber.Bots
 			if (turnContext.Activity.Attachments?.Count > 0)
 			{
 				var attachment = turnContext.Activity.Attachments[0];
-				if (attachment.ContentType == "image/jpeg" || attachment.ContentType == "image/png")
+				var image = await _httpClient.GetStreamAsync(attachment.ContentUrl);
+				if (image != null)
 				{
-					var image = await _httpClient.GetStreamAsync(attachment.ContentUrl);
-					if (image != null) result = await _imageAnalyzer.AnalyzeImageAsync(image);
+					result = await _imageAnalyzer.AnalyzeImageAsync(image);
 				}
 			}
 			else

@@ -2,6 +2,7 @@
 {
 	#region
 
+	using System;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
@@ -34,16 +35,23 @@
 		{
 			var client =
 				new ComputerVisionClient(new ApiKeyServiceClientCredentials(key))
-					{Endpoint = endpoint};
+				{ Endpoint = endpoint };
 			return client;
 		}
 
 		public async Task<ImageAnalysis> AnalyzeImageAsync(Stream image)
 		{
-			var client = Authenticate(_computerVisionEndpoint, _computerVisionKey);
+			try
+			{
+				var client = Authenticate(_computerVisionEndpoint, _computerVisionKey);
 
-			var analysis = await client.AnalyzeImageInStreamAsync(image, Features);
-			return analysis;
+				var analysis = await client.AnalyzeImageInStreamAsync(image, Features);
+				return analysis;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
 		}
 
 		public async Task<ImageAnalysis> AnalyzeUrl(string url)
